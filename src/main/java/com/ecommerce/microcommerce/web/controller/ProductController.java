@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,20 @@ public class ProductController {
     @Autowired
     private ProductDao productDao;
 
+    /**
+     * Calculer la marge d'un produit
+     * @param id id du produit
+     * @return marge du produit
+     */
+    @GetMapping(value="/AdminProduits/marge/{id}")
+    public int calculerMargeDuProduit(@PathVariable int id) {
+        Product p = productDao.findById(id);
+
+        if( p == null ) {
+            throw new ProduitIntrouvableException("Le produit avec l'id " + id);
+        }
+        return p.getPrix() - p.getPrixAchat();
+    }
 
     //Récupérer la liste des produits
 
