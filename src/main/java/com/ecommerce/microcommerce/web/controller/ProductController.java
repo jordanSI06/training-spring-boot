@@ -43,6 +43,14 @@ public class ProductController {
         return p.getPrix() - p.getPrixAchat();
     }
 
+    /**
+     * Trier les produits par ordre alphabetique
+     * @return list triee des produits
+     */
+    @GetMapping(value="/Produits/trier")
+    public List<Product> trierProduitsParOrdreAlphabetique() {
+        return productDao.findAll(new Sort(Sort.Direction.ASC, "nom"));
+    }
     //Récupérer la liste des produits
 
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
@@ -75,9 +83,6 @@ public class ProductController {
 
         return produit;
     }
-
-
-
 
     //ajouter un produit
     @PostMapping(value = "/Produits")
