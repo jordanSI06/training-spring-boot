@@ -1,0 +1,342 @@
+{
+	"info": {
+		"_postman_id": "0c520580-7430-429a-9277-065c30984a20",
+		"name": "microcommerce-test",
+		"description": "Test the microcommerce services ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Calculer_marge_produit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2c4d4a4b-488e-4216-bee9-2857bdcac833",
+						"exec": [
+							"pm.test(\"Valeur de la marge à vérifier: 300 euros\", function () {",
+							"    pm.expect(Number(pm.response.text())).to.equal(300);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:9090/AdminProduits/marge/2",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"AdminProduits",
+						"marge",
+						"2"
+					]
+				},
+				"description": "Calculer la marge d'un produit donné"
+			},
+			"response": []
+		},
+		{
+			"name": "Trier_produits",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8005e8ef-f04d-41cb-a004-d40e46f79667",
+						"exec": [
+							"pm.test(\"Trie par ordre alphabétique à vérifier\", function () {",
+							"    // les produits doivent etre dans cet ordre : aspirateur, ordinateur et table de ping pong",
+							"    pm.expect(pm.response.json()).to.have.nested.property('[0].id').to.equal(2);",
+							"    pm.expect(pm.response.json()).to.have.nested.property('[1].id').to.equal(1);",
+							"    pm.expect(pm.response.json()).to.have.nested.property('[2].id').to.equal(3);",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:9090/Produits/trier",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"Produits",
+						"trier"
+					]
+				},
+				"description": "Trier par ordre alphabétique les produits"
+			},
+			"response": []
+		},
+		{
+			"name": "Liste de tous les produits",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d78559ea-e2e5-4f40-89f9-1ce86ce1c465",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:9090/Produits",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"Produits"
+					]
+				},
+				"description": "Lister tous les produits de la base de données."
+			},
+			"response": []
+		},
+		{
+			"name": "Obtenir un produit avec son id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c0ec9c0-5b60-4761-8520-7dbda59d085e",
+						"exec": [
+							"pm.test(\"Obtenir un produit avec son id\", function () {",
+							"    // les produits est un aspirateur avec un id=1",
+							"    pm.expect(pm.response.json()).to.have.nested.property('id').to.equal(1);",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:9090/Produits/1",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"Produits",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ajouter un produit",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 4,\n\t\"nom\": \"Rallon\",\n\t\"prix\": 40,\n\t\"prixAchat\": 20\n}"
+				},
+				"url": {
+					"raw": "localhost:9090/Produits",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"Produits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ajouter un produit gratuit [Exception]",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5b74f550-30ab-49de-a970-ed5eac554895",
+						"exec": [
+							"pm.test(\"Exception: produit gratuit\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 5,\n\t\"nom\": \"Bureau\",\n\t\"prix\": 0,\n\t\"prixAchat\": 0\n}"
+				},
+				"url": {
+					"raw": "localhost:9090/Produits",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"Produits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Supprimer un produit",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:9090/Produits/4",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"Produits",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mettre a jour un produit",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"nom\": \"Ordinateur ASUS ROG\",\n    \"prix\": 350,\n    \"prixAchat\": 120\n}"
+				},
+				"url": {
+					"raw": "localhost:9090/Produits",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"Produits"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Chercher un produit cher",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:9090/test/produits/490",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"test",
+						"produits",
+						"490"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ef3869ed-dcb8-4627-bd01-28f0cd8dab87",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "918edf17-bc7c-4c83-89a7-86d828ab9dda",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
