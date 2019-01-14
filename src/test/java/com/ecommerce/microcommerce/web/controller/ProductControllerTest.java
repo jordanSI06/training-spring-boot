@@ -128,4 +128,34 @@ public class ProductControllerTest {
                 .content(inputJson))
                 .andExpect(status().is2xxSuccessful());
     }
+
+    @Test
+    public void ajouterProduitGratuit() throws Exception {
+        Product book = new Product(1, "Livre Harry Potter", 0, 20);
+        given(productDao.save(book)).willReturn(book);
+
+
+        String inputJson = this.mapToJson(book);
+
+        mockMvc.perform(post("/Produits")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(inputJson))
+                .andExpect(status().isNotAcceptable());
+
+    }
+
+   /* @Test
+    public void supprimerProduitInexistant() throws Exception {
+        Product book = new Product(1, "Livre Harry Potter", 0, 20);
+        given(productDao.save(book)).willReturn(book);
+
+
+        String inputJson = this.mapToJson(book);
+
+        mockMvc.perform(delete("/Produits/{id}", 10)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(inputJson))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }*/
 }
