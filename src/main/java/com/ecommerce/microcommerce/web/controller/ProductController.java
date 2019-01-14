@@ -109,7 +109,7 @@ public class ProductController {
     @DeleteMapping (value = "/Produits/{id}")
     public void supprimerProduit(@PathVariable int id) {
 
-        productDao.deleteById(id);
+        //productDao.deleteById(id);
     }
 
     @PutMapping (value = "/Produits")

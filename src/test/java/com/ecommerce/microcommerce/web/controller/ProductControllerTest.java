@@ -20,8 +20,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -32,6 +31,7 @@ public class ProductControllerTest {
 
     @MockBean
     private ProductDao productDao;
+    private ProductController productController;
 
     protected String mapToJson(Object o) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -76,5 +76,39 @@ public class ProductControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].nom", is(car.getNom())));
+    }
+
+    @Test
+    public void deleteProduct() throws Exception {
+        Product car = new Product(6, "Voiture", 9000, 6000);
+
+        given(productDao.save(car)).willReturn(car);
+
+        String inputJson = this.mapToJson(car);
+
+        productDao.delete(6);
+
+        mockMvc.perform(get("/Produits")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(inputJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void findGreaterPrice() throws Exception {
+        Product car = new Product(6, "Voiture", 9000, 6000);
+
+        given(productDao.save(car)).willReturn(car);
+
+        String inputJson = this.mapToJson(car);
+
+        productDao.chercherUnProduitCher(3000);
+
+        mockMvc.perform(post("/Produits")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(inputJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 }
