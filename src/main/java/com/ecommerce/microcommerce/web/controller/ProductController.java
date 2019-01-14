@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -35,13 +37,18 @@ public class ProductController {
      * @return marge du produit
      */
     @GetMapping(value="/AdminProduits/marge/{id}")
-    public int calculerMargeDuProduit(@PathVariable int id) {
+    public ResponseEntity<HashMap<Product, Integer>> calculerMargeDuProduit(@PathVariable int id) {
         Product p = productDao.findById(id);
 
         if( p == null ) {
             throw new ProduitIntrouvableException("Le produit avec l'id " + id);
         }
-        return p.getPrix() - p.getPrixAchat();
+        int marge = p.getPrix() - p.getPrixAchat();
+
+        HashMap<Product, Integer> hmap = new HashMap<Product, Integer>();
+        hmap.put(p, new Integer(marge));
+
+        return new ResponseEntity<HashMap<Product, Integer>>(hmap, HttpStatus.OK);
     }
 
     /**
@@ -88,7 +95,7 @@ public class ProductController {
     //ajouter un produit
     @PostMapping(value = "/Produits")
 
-    public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
+    public ResponseEntity<Void> ajouterProduit( @RequestBody Product product) {
         // Verifier si le produit est gratuit
         if(product.getPrix() <= 0) throw new ProduitGratuitException(product.getNom());
 
@@ -107,9 +114,11 @@ public class ProductController {
     }
 
     @DeleteMapping (value = "/Produits/{id}")
-    public void supprimerProduit(@PathVariable int id) {
+    public /*boolean*/ void supprimerProduit(@PathVariable int id) {
 
-        //productDao.deleteById(id);
+        productDao.deleteById(id);
+
+        //return (!productDao.existsById(id)) ? true : false;
     }
 
     @PutMapping (value = "/Produits")
