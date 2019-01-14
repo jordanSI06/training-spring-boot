@@ -31,12 +31,14 @@ public class ProductController {
     @Autowired
     private ProductDao productDao;
 
+
     /**
      * Calculer la marge d'un produit
      * @param id id du produit
      * @return marge du produit
      */
     @GetMapping(value="/AdminProduits/marge/{id}")
+    @ApiOperation(value = "Calcule la marge du produit entre le prix de vente et le prix d'achat!")
     public ResponseEntity<HashMap<Product, Integer>> calculerMargeDuProduit(@PathVariable int id) {
         Product p = productDao.findById(id);
 
@@ -56,13 +58,14 @@ public class ProductController {
      * @return list triee des produits
      */
     @GetMapping(value="/Produits/trier")
+    @ApiOperation(value = "Trie par ordre alphabétique l'ordre de la liste de produit!")
     public List<Product> trierProduitsParOrdreAlphabetique() {
         return productDao.findAll(new Sort(Sort.Direction.ASC, "nom"));
     }
     //Récupérer la liste des produits
 
     @RequestMapping(value = "/Produits", method = RequestMethod.GET)
-
+    @ApiOperation(value = "Liste les produits disponibles!")
     public MappingJacksonValue listeProduits() {
 
         Iterable<Product> produits = productDao.findAll();
@@ -94,7 +97,7 @@ public class ProductController {
 
     //ajouter un produit
     @PostMapping(value = "/Produits")
-
+    @ApiOperation(value = "Ajoute un produit dans la liste!")
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
         // Verifier si le produit est gratuit
         if(product.getPrix() <= 0) throw new ProduitGratuitException(product.getNom());
@@ -114,14 +117,16 @@ public class ProductController {
     }
 
     @DeleteMapping (value = "/Produits/{id}")
+    @ApiOperation(value = "Supprime un produit disponible dans la liste!")
     public /*boolean*/ void supprimerProduit(@PathVariable int id) {
 
-        productDao.deleteById(id);
+        //productDao.deleteById(id);
 
         //return (!productDao.existsById(id)) ? true : false;
     }
 
     @PutMapping (value = "/Produits")
+    @ApiOperation(value = "Met à jour  un produit disponible sur la liste!")
     public void updateProduit(@RequestBody Product product) {
         // Verifier si le produit est gratuit
         if(product.getPrix() <= 0) throw new ProduitGratuitException(product.getNom());
@@ -132,6 +137,7 @@ public class ProductController {
 
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
+    @ApiOperation(value = "Test de requete afin de trouver des produits chers!")
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
 
         return productDao.chercherUnProduitCher(prix);
